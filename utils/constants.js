@@ -1,4 +1,4 @@
-export const CLIENT_ID = "TODO: INSERT YOUR CLIENT ID HERE";
+export const CLIENT_ID = "2fcc555eb5fe4535b8bb661f78a97063";
 export const SCOPES = [
   "user-read-currently-playing",
   "user-read-recently-played",
@@ -9,5 +9,5 @@ export const SCOPES = [
   "user-read-email",
   "user-read-private"
 ];
-export const REDIRECT_URI = "TODO: INSERT YOUR REDIRECT_URI HERE";
-export const ALBUM_ID = "TODO: INSERT YOUR ALBUM ID HERE IF YOU ARE USING ONE";
+export const REDIRECT_URI = "exp://10.34.131.26:19000";
+export const ALBUM_ID = "29K57FAkLureB5jEJ58WwI?si=rSTFFsB1RDi25U9gdUIrOg";
