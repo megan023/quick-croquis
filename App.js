@@ -6,7 +6,8 @@ import { REDIRECT_URI, SCOPES, CLIENT_ID, ALBUM_ID } from "./utils/constants";
 import Colors from "./Themes/colors"
 import images from "./Themes/images"
 import millisToMinutesAndSeconds from "./utils/millisToMinuteSeconds.js"
-
+import { Ionicons } from '@expo/vector-icons';
+import {WebView} from 'react-native-webview';
 // Endpoints for authorizing with Spotify
 const discovery = {
   authorizationEndpoint: "https://accounts.spotify.com/authorize",
@@ -48,9 +49,9 @@ export default function App() {
 
   const renderItem = (item, index) => (
     <View style = {styles.songBox}>
-      <Text style={styles.songNum}>
-        {index+1}
-      </Text>
+      <Pressable style={styles.songPlay}>
+        <Ionicons name="play-circle" size={22} color="green" />
+      </Pressable>
       <Image style={styles.songImage} source={item.album.images[0]}/>
       <View style={styles.songNameBox}>
         <Text style={styles.songName} numberOfLines={1}>
@@ -128,14 +129,8 @@ const styles = StyleSheet.create({
     margin: 5,
     color: Colors.gray,
   },
-  songNum:{
-    color: "white",
-    fontFamily: "Arial",
-    width: "5%",
-    height:15,
-    fontSize: 14,
+  songPlay:{
     alignSelf: "center",
-    color: "grey",
   },
   songDur:{
     color: "white",
