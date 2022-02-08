@@ -1,5 +1,5 @@
-# Spotify-1.0
-CS47 Assign3
+# Spotify-2.0
+CS47 Assign4
 
 <img src='https://imgur.com/7Dy2qQP.gif' title='Video
 Walkthrough' width='' alt='Video Walkthrough' />
