@@ -1,4 +1,4 @@
-import { StyleSheet, Text, Pressable, FlatList, View, Image, SafeAreaView } from "react-native";
+import { StyleSheet, Text, Pressable, FlatList, View, Image, SafeAreaView, Button } from "react-native";
 import { useState, useEffect } from "react";
 import { ResponseType, useAuthRequest } from "expo-auth-session";
 import { myTopTracks, albumTracks } from "./utils/apiOptions";
@@ -7,14 +7,15 @@ import Colors from "./Themes/colors"
 import images from "./Themes/images"
 import millisToMinutesAndSeconds from "./utils/millisToMinuteSeconds.js"
 import { Ionicons } from '@expo/vector-icons';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 import {WebView} from 'react-native-webview';
 // Endpoints for authorizing with Spotify
 const discovery = {
   authorizationEndpoint: "https://accounts.spotify.com/authorize",
   tokenEndpoint: "https://accounts.spotify.com/api/token"
 };
-
-export default function App() {
+function MainScreen({ navigation }) {
   const [token, setToken] = useState("");
   const [tracks, setTracks] = useState([]);
   const [request, response, promptAsync] = useAuthRequest(
@@ -39,34 +40,34 @@ export default function App() {
 
   useEffect(() => {
     if (token) {
-      // TODO: Select which option you want: Top Tracks or Album Tracks
-
       // Comment out the one you are not using
       myTopTracks(setTracks, token);
       //albumTracks(ALBUM_ID, setTracks, token);
     }
   }, [token]);
-
+  console.log(tracks[0])
   const renderItem = (item, index) => (
     <View style = {styles.songBox}>
-      <Pressable style={styles.songPlay}>
+      <Pressable style={styles.songPlay} onPress={() => navigation.navigate('Song Preview', {url: item.preview_url})}>
         <Ionicons name="play-circle" size={22} color="green" />
       </Pressable>
       <Image style={styles.songImage} source={item.album.images[0]}/>
       <View style={styles.songNameBox}>
-        <Text style={styles.songName} numberOfLines={1}>
-          {item.name}
-        </Text>
-        <Text style={styles.songArtist}>
-          {item.artists[0].name}
-        </Text>
+        <Pressable style={styles.song} onPress={() => navigation.navigate('Song Details', {url: item.external_urls.spotify})}>
+          <Text style={styles.songName} numberOfLines={1}>
+            {item.name}
+          </Text>
+          <Text style={styles.songArtist}>
+            {item.artists[0].name}
+          </Text>
+        </Pressable>
       </View>
       <Text style={styles.songAlbum} numberOfLines={1}>
           {item.album.name}
         </Text>
       <Text style={styles.songDur}>
         {millisToMinutesAndSeconds(item.duration_ms)}
-      </Text>
+      </Text>   
     </View>
   );
   let contentDisplayed = null;
@@ -74,7 +75,7 @@ export default function App() {
     contentDisplayed = 
     <FlatList 
       data={tracks} 
-      renderItem ={({item,index}) => renderItem(item,index)}
+      renderItem ={({item, index}) => renderItem(item,index)}
       keyExtractor={(item, index) => item.id}
     />
   } else {
@@ -93,7 +94,63 @@ export default function App() {
   );
 }
 
+function DetailedSong({navigation, route}){
+  const { url } = route.params;
+  return(
+    <WebView
+        source={{
+          uri: url
+        }}
+      />
+  );
+}
+function SongPreview({navigation, route}){
+  const { url } = route.params;
+  return(
+    <WebView
+      source={{
+        uri: url
+      }}
+    />
+  );
+}
+const Stack = createStackNavigator();
+export default function App() {
+  return (
+    <NavigationContainer>
+      <Stack.Navigator
+        screenOptions= {{
+          headerStyle: {
+            backgroundColor: '#000',
+          },
+          headerTitleStyle: {
+            color: 'white',
+            fontWeight: 'bold',
+          },
+        }}
+      >
+        <Stack.Screen 
+          name="Back" 
+          component={MainScreen}
+          options={{headerShown: false}}/>
+        <Stack.Screen name="Song Details" component={DetailedSong}
+        />
+        <Stack.Screen name="Song Preview" component={SongPreview}
+        />
+      </Stack.Navigator>
+    </NavigationContainer>
+  );
+}
+
 const styles = StyleSheet.create({
+  homeScreen: {
+    flex: 1, 
+    alignItems: 'center', 
+    justifyContent: 'center',
+  },
+  homeScreenText: {
+    fontSize: 32,
+  },
   container: {
     backgroundColor: Colors.background,
     justifyContent: "center",
@@ -129,7 +186,12 @@ const styles = StyleSheet.create({
     margin: 5,
     color: Colors.gray,
   },
+  song:{
+    flex: 1,
+  },
   songPlay:{
+    flex: 1,
+    
     alignSelf: "center",
   },
   songDur:{
