@@ -10,7 +10,11 @@ import { Ionicons } from '@expo/vector-icons';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
 import {WebView} from 'react-native-webview';
-// Endpoints for authorizing with Spotify
+
+import DisplayImage from "./screens/DisplayImage";
+import Home from "./screens/Home";
+//import UploadImage from "./screens/UploadImage";
+/*// Endpoints for authorizing with Spotify
 const discovery = {
   authorizationEndpoint: "https://accounts.spotify.com/authorize",
   tokenEndpoint: "https://accounts.spotify.com/api/token"
@@ -114,6 +118,7 @@ function SongPreview({navigation, route}){
     />
   );
 }
+*/
 const Stack = createStackNavigator();
 export default function App() {
   return (
@@ -129,18 +134,19 @@ export default function App() {
           },
         }}
       >
-        <Stack.Screen 
-          name="Back" 
-          component={MainScreen}
-          options={{headerShown: false}}/>
-        <Stack.Screen name="Song Details" component={DetailedSong}
-        />
-        <Stack.Screen name="Song Preview" component={SongPreview}
+       
+        <Stack.Screen name="Draw!" component={DisplayImage}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
+/*
+<Stack.Screen 
+name="Back" 
+component={Home}
+options={{headerShown: false}}/>*/
 
 const styles = StyleSheet.create({
   homeScreen: {
