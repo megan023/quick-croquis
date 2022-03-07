@@ -5,6 +5,7 @@ const colors = {
   teal: "#83F7D3",
   red: "#FA004D",
   salmon: "#F77E5E",
+  lightGray:"#d6d6d6"
 };
 
 export default colors;

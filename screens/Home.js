@@ -1,4 +1,4 @@
-import { StyleSheet, Text, Pressable, View, Image, SafeAreaView, Button } from "react-native";
+import { StyleSheet, Text, Pressable, View, Alert, SafeAreaView, Button } from "react-native";
 import React, { useEffect, useState } from "react";
 import { Ionicons } from '@expo/vector-icons';
 //import { useNavigation } from "@react-navigation/native";
@@ -15,9 +15,9 @@ function Home({ navigation }){
           <Text style={styles.text}> Add Image </Text>
           <Ionicons name="add-sharp" size={ normalize(40)} color="black" />
         </Pressable>
-        <Pressable style={styles.buttonBar} onPress={() => navigation.navigate('')}>
+        <Pressable style={styles.buttonBar} onPress={() => Alert.alert("Connect with Pinterest Not Yet Implemented")}>
           <Text style={styles.text}> Connect with {"\n"} Pinterest</Text>
-          <Ionicons style={styles.icon} name="logo-pinterest" size={ normalize(40)} color="black" />
+          <Ionicons style={styles.icon} name="logo-pinterest" size={ normalize(40)} color="red" />
         </Pressable>
         <Pressable style={styles.buttonBar} onPress={() => navigation.navigate('Draw!')}>
           <Text style={styles.text} numberOfLines={1}> Start Drawing! </Text>
@@ -34,19 +34,21 @@ function Home({ navigation }){
       flex: 1, 
       flexDirection:"column",
       justifyContent:"space-evenly",
-      backgroundColor:Colors.gray,
     },
     buttonBar:{
       flex:0,
       flexDirection: "row",
-      backgroundColor: Colors.teal,
-      marginBottom:normalize(15),
+      backgroundColor: Colors.lightGray,
+      marginBottom: normalize(15),
+      justifyContent: "flex-start",
       alignContent:"center",
+      padding:15,
     },
     text:{
-      fontSize: normalize(40),
+      fontSize: normalize(30),
+      fontFamily: "Helvetica",
     },
     icon:{
-      alignSelf:"flex-end"
+      alignSelf:"center"
     }
   });
