@@ -8,11 +8,14 @@ import Modal from 'react-modal';
 import PickTime from "./PickTime";
 import {normalize} from "../utils/normalize"
 
+import { collection, getDocs, doc } from "firebase/firestore"; 
+import {db} from "../firebase";
+
 class DisplayImage extends React.Component {
     constructor(props) {
         super(props);
         let route = this.props.route;
-        console.log("constructor:", route);
+        //console.log("constructor:", route);
         
         this.state ={ 
             show:false,
@@ -21,16 +24,17 @@ class DisplayImage extends React.Component {
             timer: 60, 
             update:false,
             playing: false, 
+            imageArr: [],
+            rand:0,
         }
         
     }
     updateMinsSecs(){
       let route = this.props.route;
-      
-      console.log("updateMinsSecs:", route);
-      mins = route.params.startTime.minutes;
+      //console.log("updateMinsSecs:", route);
+      let mins = route.params.startTime.minutes;
       console.log("mins = ",mins);
-      secs = route.params.startTime.seconds;
+      let secs = route.params.startTime.seconds;
       console.log("secs = ", secs);
       this.setState({
           startMins: mins,
@@ -50,20 +54,33 @@ class DisplayImage extends React.Component {
         1000
       );
     }
-    handleShow(){
-
-    }
-    componentDidMount(){
+    async componentDidMount(){
       this.restartTimer();
       this.startTimer();
+      try {
+        let allDocs = await getDocs(collection(db, "images"));
+        console.log("componentDidMount: allDocs:", allDocs.docs);
+        let docsArr = [];
+        allDocs.forEach((doc) => {
+          // doc.data() is never undefined for query doc snapshots
+          docsArr.push(doc.data());
+          console.log(doc.id, " => ", doc.data());
+        });
+        console.log("componentDidMount: docsArr:", docsArr);
+        this.setState({imageArr: [...docsArr]});
+        // docsArr = [{}, {}]
+      } catch (e){
+        console.log(e);
+        alert("Sorry! We were unable to retrieve the images from Firebase.");
+      }
     }
     
     componentDidUpdate(){
-      console.log("componentDidUpdate:", this.props.route,this.state.update);
+      //console.log("componentDidUpdate:", this.props.route,this.state.update);
       let route = this.props.route;
       if (this.state.update == true && route.params
-        && (route.params.startTime.minutes!=this.state.startMins 
-          || route.params.startTime.seconds!=this.state.startSecs)){
+        && !isNaN(route.params.startTime.minutes)
+          && !isNaN(route.params.startTime.seconds)){
             console.log("UPDATING:");
             this.updateMinsSecs();
             this.setState({playing: false, update: false});
@@ -117,12 +134,21 @@ class DisplayImage extends React.Component {
         sec = "0" + sec
       }
 
+
+      let url = "./assets/adaptive-icon.png";
+      url = "https://firebasestorage.googleapis.com/v0/b/quick-croquis.appspot.com/o/cd796a8b-8ec4-4533-9cb8-74e037a1b5e4?alt=media&token=93a56d45-1b5f-4524-b2fb-87c9e8e0683c"
+      if(this.state.imageArr.length > 0){
+        console.log("render: ", this.state.imageArr);
+        url = this.state.imageArr[this.state.rand].url;
+        console.log("render: ", url);
+      }
+
       return (
         <View style={styles.top}>
           {/*<Modal show = {this.state.show}>
             {PickTime}
           </Modal>*/}
-          <Image style={styles.image} source={{uri:"https://i.pinimg.com/750x/80/84/bb/8084bb2f52ae01e4e5d24a0358150126.jpg"}}/>
+          <Image style={styles.image} source={{uri: url}}/>
           <View style={styles.timerBar}>
             <Text style={styles.timer}> {mins}:{sec} </Text>
             <Pressable style={styles.play} onPress={() => {

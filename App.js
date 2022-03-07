@@ -9,6 +9,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import Home from "./screens/Home";
 import DisplayImage from "./screens/DisplayImage";
 import PickTime from "./screens/PickTime";
+import PickImage from "./screens/PickImage";
 
 
 const Stack = createStackNavigator();
@@ -37,10 +38,9 @@ export default class App extends React.Component {
           }}
         >
           <Stack.Screen name="Navigation" component={Home}/>
+          <Stack.Screen name="Upload Image" component={PickImage}/>
           <Stack.Screen name="Draw!" component={DisplayImage}/>
-          <Stack.Screen name="Change Cycle Length" component={PickTime} options={{headerShown: false}}>
-            {/*props => <PickTime {...props} childToParent={{this.childToParent}} />*/}
-          </Stack.Screen>
+          <Stack.Screen name="Change Cycle Length" component={PickTime} options={{headerShown: false}}/>
         </Stack.Navigator>
       </NavigationContainer>
     );

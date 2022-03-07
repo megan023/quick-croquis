@@ -11,7 +11,7 @@ import Colors from "../Themes/colors"
 function Home({ navigation }){
     return (
       <View style={styles.top}>
-        <Pressable style={styles.buttonBar} onPress={() => navigation.navigate('')}>
+        <Pressable style={styles.buttonBar} onPress={() => navigation.navigate('Upload Image')}>
           <Text style={styles.text}> Add Image </Text>
           <Ionicons name="add-sharp" size={ normalize(40)} color="black" />
         </Pressable>

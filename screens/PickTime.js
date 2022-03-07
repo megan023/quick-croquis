@@ -8,8 +8,8 @@ import {TimePicker} from 'react-native-simple-time-picker';
 import {normalize} from "../utils/normalize"
 
 function PickTime({navigation, route}){
-  const [selectedSeconds, setSelectedSeconds] = useState(0);
-  const [selectedMinutes, setSelectedMinutes] = useState(0);
+  const [selectedSeconds, setSelectedSeconds] = useState(30);
+  const [selectedMinutes, setSelectedMinutes] = useState(1);
 
   return (
     <SafeAreaView style={styles.container}>
