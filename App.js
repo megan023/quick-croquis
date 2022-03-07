@@ -5,7 +5,6 @@ import {normalize} from "./utils/normalize"
 
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/stack';
-import {WebView} from 'react-native-webview';
 
 import Home from "./screens/Home";
 import DisplayImage from "./screens/DisplayImage";

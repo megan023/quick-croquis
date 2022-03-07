@@ -3,7 +3,6 @@ import React, {useEffect, useState} from 'react';
 import { StyleSheet, SafeAreaView, Text, Pressable, View, Image, Button } from "react-native";
 import Colors from "../Themes/colors"
 
-import {secContext, minContext} from '../App'
 import {TimePicker} from 'react-native-simple-time-picker';
 
 import {normalize} from "../utils/normalize"
