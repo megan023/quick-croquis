@@ -4,25 +4,39 @@ import Colors from "../Themes/colors"
 
 import React, { useState, useEffect } from "react";
 
+import Modal from 'react-modal';
+import PickTime from "./PickTime";
 import {normalize} from "../utils/normalize"
 
-React.useEffect(() => {
-  if (route.params?.post) {
-    // Post updated, do something with `route.params.post`
-    // For example, send the post to the server
-  }
-}, [route.params?.post]);
-
 class DisplayImage extends React.Component {
-  
     constructor(props) {
         super(props);
+        let route = this.props.route;
+        console.log("constructor:", route);
+        
         this.state ={ 
-          startMins: 0,
-          startSecs: 30,
-          timer: 30, 
-          playing: false,
+            show:false,
+            startMins: 1,
+            startSecs: 0,
+            timer: 60, 
+            update:false,
+            playing: false, 
         }
+        
+    }
+    updateMinsSecs(){
+      let route = this.props.route;
+      
+      console.log("updateMinsSecs:", route);
+      mins = route.params.startTime.minutes;
+      console.log("mins = ",mins);
+      secs = route.params.startTime.seconds;
+      console.log("secs = ", secs);
+      this.setState({
+          startMins: mins,
+          startSecs: secs,
+          timer: mins*60 + secs
+        });
     }
     restartTimer(){
       this.setState({
@@ -36,12 +50,26 @@ class DisplayImage extends React.Component {
         1000
       );
     }
+    handleShow(){
+
+    }
     componentDidMount(){
-      this.startTimer()
+      this.restartTimer();
+      this.startTimer();
     }
     
     componentDidUpdate(){
-      if(this.state.timer === 1){
+      console.log("componentDidUpdate:", this.props.route,this.state.update);
+      let route = this.props.route;
+      if (this.state.update == true && route.params
+        && (route.params.startTime.minutes!=this.state.startMins 
+          || route.params.startTime.seconds!=this.state.startSecs)){
+            console.log("UPDATING:");
+            this.updateMinsSecs();
+            this.setState({playing: false, update: false});
+            this.render();
+      }
+      else if(this.state.timer === 1){
         //new image?
         clearInterval(this.interval);
       }
@@ -63,9 +91,12 @@ class DisplayImage extends React.Component {
     
 
     render() {
+      //console.log("render:", this.props.route);
+      
       let pausePlay = null;
       let play_button_size = normalize(45);
       let navigation = this.props.navigation;
+
       if(this.state.playing== true){
         pausePlay = 
           <Pressable style={styles.play} onPress={() => this.setState({playing: false})}>
@@ -85,11 +116,12 @@ class DisplayImage extends React.Component {
       if(sec <10){
         sec = "0" + sec
       }
-      
-      
 
       return (
         <View style={styles.top}>
+          {/*<Modal show = {this.state.show}>
+            {PickTime}
+          </Modal>*/}
           <Image style={styles.image} source={{uri:"https://i.pinimg.com/750x/80/84/bb/8084bb2f52ae01e4e5d24a0358150126.jpg"}}/>
           <View style={styles.timerBar}>
             <Text style={styles.timer}> {mins}:{sec} </Text>
@@ -99,7 +131,11 @@ class DisplayImage extends React.Component {
               }}>
               <Ionicons name="refresh-sharp" size={play_button_size} color="black" />
             </Pressable>
-            <Pressable style={styles.settings}  onPress={() => navigation.navigate('Change Cycle Length')}>
+            <Pressable style={styles.settings}  onPress={() => {
+              this.setState({update: true});
+              navigation.navigate('Change Cycle Length');
+              
+            }}>
               <Ionicons name="settings-sharp" size={ normalize(20)} color="black" />
             </Pressable>
           </View>

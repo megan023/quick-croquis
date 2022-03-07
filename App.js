@@ -14,20 +14,6 @@ import PickTime from "./screens/PickTime";
 
 const Stack = createStackNavigator();
 
-export const startTimes = {
-  secs: 30,
-  mins: 0,
-};
-export const secContext = React.createContext(
-  {
-    secs: 30 // default value
-  }
-);
-export const minContext = React.createContext(
-  {
-    mins: 0 // default value
-  }
-);
 export default class App extends React.Component {
   constructor(props) {
     super(props);
@@ -52,8 +38,8 @@ export default class App extends React.Component {
           }}
         >
           <Stack.Screen name="Navigation" component={Home}/>
-          <Stack.Screen name="Draw!" component={DisplayImage} />
-          <Stack.Screen name="Change Cycle Length" component={PickTime}>
+          <Stack.Screen name="Draw!" component={DisplayImage}/>
+          <Stack.Screen name="Change Cycle Length" component={PickTime} options={{headerShown: false}}>
             {/*props => <PickTime {...props} childToParent={{this.childToParent}} />*/}
           </Stack.Screen>
         </Stack.Navigator>

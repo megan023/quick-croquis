@@ -8,44 +8,36 @@ import {TimePicker} from 'react-native-simple-time-picker';
 
 import {normalize} from "../utils/normalize"
 
-class PickTime extends React.Component{
-  constructor(props) {
-    super(props);
-    this.state ={ 
-      selectedMinutes: 0,
-      selectedSeconds: 30,
-    }
-  }
-    setSelectedMinutes(i){
-      this.setState({selectedMinutes: i})
-    }
-    setSelectedSeconds(i){
-      this.setState({selectedSeconds: i})
-    };
-    handleChange(m, s){
-      <secContext.Provider value={this.state.selectedMinutes}></secContext.Provider>
-      this.context.childToParent(m,s);
-    }
-    render(){
-      console.log(this);
-      return (
-        <SafeAreaView style={styles.container}>
-          <View style={styles.container}>
-            <TimePicker pickerShows = {["seconds", "minutes"]}
-              selectedMinutes={this.state.selectedMinutes} 
-              minutesUnit = {"mins"}
-              selectedSeconds={this.state.selectedSeconds}
-              secondsUnit = {"secs"}
-              onChange={(minutes, seconds) => {
-                this.setSelectedMinutes(minutes);
-                this.setSelectedSeconds(seconds);
-                this.handleChange(minutes, seconds);
-              }}
-            />
-          </View>
-        </SafeAreaView>
-      );
-    }
+function PickTime({navigation, route}){
+  const [selectedSeconds, setSelectedSeconds] = useState(0);
+  const [selectedMinutes, setSelectedMinutes] = useState(0);
+
+  return (
+    <SafeAreaView style={styles.container}>
+        <TimePicker
+          pickerShows = {["seconds", "minutes"]}
+          selectedMinutes={selectedMinutes} 
+          minutesUnit = {"mins"}
+          selectedSeconds={selectedSeconds}
+          secondsUnit = {"secs"}
+          onChange={(minutes, seconds) => {
+            setSelectedSeconds(seconds);
+            setSelectedMinutes(minutes);
+          }}
+        />
+        <Button
+        title="Done"
+        onPress={() => {
+          // Pass and merge params back to home screen
+          navigation.navigate({
+            name: 'Draw!',
+            params: { startTime: selectedMinutes},
+            merge: true,
+          });
+        }}
+      />
+    </SafeAreaView>
+  );
 };
 
 export default PickTime;
