@@ -80,11 +80,11 @@ class DisplayImage extends React.Component {
       let next_i = this.state.curPhotoIndex+1;
       if (next_i < this.state.sessionStorage.length){
         this.setState((prevState) => ({
-          rand: sessionStorage[next_i], 
+          rand: prevState.sessionStorage[next_i], 
           curPhotoIndex: next_i,
         }))
       } else{
-        newRand();
+        this.newRand();
       }
     }
     async componentDidMount(){
@@ -203,8 +203,8 @@ class DisplayImage extends React.Component {
             </Pressable>
             {pausePlay}
             <Pressable style={styles.play} onPress={() => {
+              this.nextPhoto();
               this.restartTimer();
-              this.newRand();
             }}>
               <Ionicons name="play-skip-forward-sharp" size={play_button_size} color="black" />
             </Pressable>

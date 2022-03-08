@@ -10,6 +10,7 @@ import Home from "./screens/Home";
 import DisplayImage from "./screens/DisplayImage";
 import PickTime from "./screens/PickTime";
 import PickImage from "./screens/PickImage";
+//import PinterestBoards from "./screens/PinterestBoards"; <Stack.Screen name="Pinterest Boards" component={PinterestBoards}/>
 
 
 const Stack = createStackNavigator();
@@ -37,6 +38,7 @@ export default class App extends React.Component {
             },
           }}
         >
+          
           <Stack.Screen name="Navigation" component={Home}/>
           <Stack.Screen name="Upload Image" component={PickImage}/>
           <Stack.Screen name="Draw!" component={DisplayImage}/>
