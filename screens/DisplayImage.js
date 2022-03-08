@@ -93,13 +93,13 @@ class DisplayImage extends React.Component {
       try {
         const allDocs = await getDocs(collection(db, "images"));
 
-        console.log("componentDidMount: allDocs.docs:", allDocs.docs);
-        console.log("componentDidMount: allDocs:", {allDocs});
+        //console.log("componentDidMount: allDocs.docs:", allDocs.docs);
+        //console.log("componentDidMount: allDocs:", {allDocs});
         let docsArr = [];
         allDocs.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
           docsArr.push(doc.data());
-          console.log(doc.id, " => ", doc.data());
+          //console.log(doc.id, " => ", doc.data());
         });
         //console.log("componentDidMount: docsArr:", docsArr);
         this.setState({imageArr: [...docsArr]});
@@ -123,7 +123,7 @@ class DisplayImage extends React.Component {
       }
       else if(this.state.timer === -1){
         //new image?
-        this.newRand();
+        this.nextPhoto();
         this.restartTimer(); 
         //clearInterval(this.interval);
       }
@@ -131,11 +131,10 @@ class DisplayImage extends React.Component {
         clearInterval(this.interval);
       }
     }
-      
+      s
     componentWillUnmount(){
        clearInterval(this.interval);
     }
-    
 
     render() {
       //console.log("render:", this.props.route);
