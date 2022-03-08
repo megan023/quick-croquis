@@ -5,7 +5,8 @@ import Colors from "../Themes/colors"
 
 import {TimePicker} from 'react-native-simple-time-picker';
 
-import {normalize} from "../utils/normalize"
+
+//My implementation references https://aboutreact.com/react-native-timepicker/
 
 function PickTime({navigation, route}){
   const [selectedSeconds, setSelectedSeconds] = useState(30);

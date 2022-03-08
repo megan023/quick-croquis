@@ -17,6 +17,7 @@ class DisplayImage extends React.Component {
         let route = this.props.route;
         //console.log("constructor:", route);
         
+        let r = Math.floor(Math.random()*2)
         this.state ={ 
             show:false,
             startMins: 1,
@@ -25,7 +26,9 @@ class DisplayImage extends React.Component {
             update:false,
             playing: false, 
             imageArr: [],
-            rand:  Math.floor(Math.random()*2),
+            rand: r,
+            curPhotoIndex: 0,
+            sessionStorage: [r],
         }
         
     }
@@ -54,6 +57,36 @@ class DisplayImage extends React.Component {
         1000
       );
     }
+    newRand(){
+      let r = Math.floor(Math.random()*this.state.imageArr.length);
+      this.setState((prevState) => ({
+        rand: r, 
+        curPhotoIndex: prevState.curPhotoIndex + 1,
+        sessionStorage: [...prevState.sessionStorage, r],
+      }))
+    }
+    prevPhoto(){
+      let prev_i = this.state.curPhotoIndex-1;
+      if (prev_i === -1){
+        alert("No more history.");
+      }else{
+        this.setState((prevState) => ({
+          rand: this.state.sessionStorage[prev_i], 
+          curPhotoIndex: prev_i,
+        }))
+      }
+    }
+    nextPhoto(){
+      let next_i = this.state.curPhotoIndex+1;
+      if (next_i < this.state.sessionStorage.length){
+        this.setState((prevState) => ({
+          rand: sessionStorage[next_i], 
+          curPhotoIndex: next_i,
+        }))
+      } else{
+        newRand();
+      }
+    }
     async componentDidMount(){
       this.restartTimer();
       this.startTimer();
@@ -68,7 +101,7 @@ class DisplayImage extends React.Component {
           docsArr.push(doc.data());
           console.log(doc.id, " => ", doc.data());
         });
-        console.log("componentDidMount: docsArr:", docsArr);
+        //console.log("componentDidMount: docsArr:", docsArr);
         this.setState({imageArr: [...docsArr]});
         // docsArr = [{}, {}]
       } catch (e){
@@ -88,7 +121,7 @@ class DisplayImage extends React.Component {
             this.setState({playing: false, update: false});
             this.render();
       }
-      else if(this.state.timer === 1){
+      else if(this.state.timer === -1){
         //new image?
         this.newRand();
         this.restartTimer(); 
@@ -97,23 +130,13 @@ class DisplayImage extends React.Component {
       else if(this.state.playing == false){ 
         clearInterval(this.interval);
       }
-      /*
-      else if(this.state.playing == true){ 
-        this.innterval = setInterval(
-          () => this.setState((prevState)=> ({ timer: prevState.timer - 1 })),
-          1000
-        );
-      }*/
     }
       
     componentWillUnmount(){
        clearInterval(this.interval);
     }
     
-    newRand(){
-      let r = Math.floor(Math.random()*this.state.imageArr.length);
-      this.setState({rand: r})
-    }
+
     render() {
       //console.log("render:", this.props.route);
       
@@ -142,7 +165,7 @@ class DisplayImage extends React.Component {
       }
 
 
-      let url = "";
+      let url = "../assets/logo.png";
       if(this.state.imageArr.length > 0){
         //console.log("render imgArr: ", this.state.imageArr);
         url = this.state.imageArr[this.state.rand].url;
@@ -173,10 +196,10 @@ class DisplayImage extends React.Component {
           </View>
           <View style={styles.controlBar}>
             <Pressable style={styles.play} onPress={() => {
+              this.prevPhoto();
               this.restartTimer();
-              this.newRand();
             }}>
-            <Ionicons name="play-skip-back-sharp" size={ play_button_size} color="black" />
+              <Ionicons name="play-skip-back-sharp" size={ play_button_size} color="black" />
             </Pressable>
             {pausePlay}
             <Pressable style={styles.play} onPress={() => {
@@ -200,7 +223,7 @@ const styles = StyleSheet.create({
     flex: 5,
     width: "90%",
     marginTop:15,
-    resizeMode: "cover",
+    resizeMode: "contain",
     alignSelf: "center",
   },
   timer:{

@@ -11,6 +11,7 @@ import {
   Text,
   View,
   LogBox,
+  TextInput,
 } from "react-native";
 import * as Clipboard from "expo-clipboard";
 import uuid from "uuid";
@@ -27,24 +28,27 @@ export default class PickImage extends React.Component {
   state = {
     image: null,
     uploading: false,
+    text: "",
   };
 
   async componentDidMount() {
-    if (Platform.OS !== "web") {
-      const {
-        status,
-      } = await ImagePicker.requestMediaLibraryPermissionsAsync();
-      if (status !== "granted") {
-        alert("Sorry, we need camera roll permissions to make this work!");
-      }
-    }
+    
   }
-
+   isValidHttpUrl(string) {
+    let url;
+    
+    try {
+      url = new URL(string);
+    } catch (_) {
+      return false;  
+    }
+    return true
+    //return url.protocol === "http:" || url.protocol === "https:";
+  }
   render() {
     let { image } = this.state;
-
     return (
-      <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <View style={styles.top}>
         {!!image && (
           <Text
             style={{
@@ -65,6 +69,23 @@ export default class PickImage extends React.Component {
 
         <Button onPress={this._takePhoto} title="Take a photo" />
         
+        <View>
+          <TextInput value={this.state.text} numberOfLines={1} onChangeText={(newText) =>{
+              this.setState({text: newText});
+            }}
+            style={styles.urlBox} placeholder={"Upload Image URL"}
+            />
+          <Button style={styles.uploadButton} onPress={() => {
+            if (!this.isValidHttpUrl(this.state.text)){
+              alert("Please input a valid URL!");
+            }else{
+              addURL(this.state.text);
+              this.setState({image:this.state.text,  text: ""})
+            }
+              
+            }} title= "Submit URL" />
+        </View>
+
         {this._maybeRenderImage()}
         {this._maybeRenderUploadingOverlay()}
 
@@ -120,12 +141,16 @@ export default class PickImage extends React.Component {
         >
           <Image source={{ uri: image }} style={{ width: 250, height: 250 }} />
         </View>
-        <Text
-          onPress={this._copyToClipboard}
+
+        <Text numberOfLines={1}
+          onPress={() => {
+            image._copyToClipboard;
+            alert("Copied link to clipboard")
+          }}
           onLongPress={this._share}
           style={{ paddingVertical: 10, paddingHorizontal: 10 }}
         >
-          {image}
+          Share Link: {image}
         </Text>
       </View>
     );
@@ -160,19 +185,29 @@ export default class PickImage extends React.Component {
       }
     }
   };
-
+  
   _pickImage = async () => {
-    let pickerResult = await ImagePicker.launchImageLibraryAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-    });
-
-    console.log({ pickerResult });
-
-    this._handleImagePicked(pickerResult);
+    if (Platform.OS !== "web") {
+      const {
+        status,
+      } = await ImagePicker.requestMediaLibraryPermissionsAsync();
+      if (status !== "granted") {
+        alert("Sorry, we need camera roll permissions to make this work!");
+      } else{
+        let pickerResult = await ImagePicker.launchImageLibraryAsync({
+          allowsEditing: true,
+          aspect: [4, 3],
+        });
+    
+        console.log({ pickerResult });
+    
+        this._handleImagePicked(pickerResult);
+      }
+    }
+    
   };
 
-
+  
   _handleImagePicked = async (pickerResult) => {
     try {
       this.setState({ uploading: true });
@@ -191,14 +226,15 @@ export default class PickImage extends React.Component {
   };
 }
 
+
+
 async function addURL(uploadUrl){
+  
   try{
-    //const collRef = collection(db, "images");
-    //console.log("collection works: " , collRef);
     const docRef = await addDoc(collection(db, "images"), {
       url: uploadUrl
     });
-    log(docRef.id);
+    console.log(docRef.id);
   } catch(e){
     console.log(e);
     alert("URL Upload failed");
@@ -230,3 +266,32 @@ async function uploadImageAsync(uri) {
 
   return await getDownloadURL(fileRef);
 }
+
+const styles = StyleSheet.create({
+  top:{ 
+    flex: 1, 
+    alignItems: "center", 
+    justifyContent: "center" 
+  },
+  urlBox:{
+    flex:0,
+    fontSize: 18,
+    height: 40,
+    width: 370,
+    margin: 12,
+    borderWidth: 1,
+    padding: 10,
+  },
+  uploadUrlBar:{
+    flex:0,
+    flexDirection:"row",
+    justifyContent:"center",
+    width: "70%",
+    alignContent:"center"
+  },
+  uploadButton:{
+    alignSelf:"flex-end",
+    backgroundColor: '#007AFF',
+    color: "#FFFFFF",
+  }
+});
