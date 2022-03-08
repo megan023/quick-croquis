@@ -25,7 +25,7 @@ class DisplayImage extends React.Component {
             update:false,
             playing: false, 
             imageArr: [],
-            rand:0,
+            rand:  Math.floor(Math.random()*2),
         }
         
     }
@@ -33,9 +33,9 @@ class DisplayImage extends React.Component {
       let route = this.props.route;
       //console.log("updateMinsSecs:", route);
       let mins = route.params.startTime.minutes;
-      console.log("mins = ",mins);
+      //console.log("mins = ",mins);
       let secs = route.params.startTime.seconds;
-      console.log("secs = ", secs);
+      //console.log("secs = ", secs);
       this.setState({
           startMins: mins,
           startSecs: secs,
@@ -58,8 +58,10 @@ class DisplayImage extends React.Component {
       this.restartTimer();
       this.startTimer();
       try {
-        let allDocs = await getDocs(collection(db, "images"));
-        console.log("componentDidMount: allDocs:", allDocs.docs);
+        const allDocs = await getDocs(collection(db, "images"));
+
+        console.log("componentDidMount: allDocs.docs:", allDocs.docs);
+        console.log("componentDidMount: allDocs:", {allDocs});
         let docsArr = [];
         allDocs.forEach((doc) => {
           // doc.data() is never undefined for query doc snapshots
@@ -81,14 +83,16 @@ class DisplayImage extends React.Component {
       if (this.state.update == true && route.params
         && !isNaN(route.params.startTime.minutes)
           && !isNaN(route.params.startTime.seconds)){
-            console.log("UPDATING:");
+            //console.log("UPDATING:");
             this.updateMinsSecs();
             this.setState({playing: false, update: false});
             this.render();
       }
       else if(this.state.timer === 1){
         //new image?
-        clearInterval(this.interval);
+        this.newRand();
+        this.restartTimer(); 
+        //clearInterval(this.interval);
       }
       else if(this.state.playing == false){ 
         clearInterval(this.interval);
@@ -106,7 +110,10 @@ class DisplayImage extends React.Component {
        clearInterval(this.interval);
     }
     
-
+    newRand(){
+      let r = Math.floor(Math.random()*this.state.imageArr.length);
+      this.setState({rand: r})
+    }
     render() {
       //console.log("render:", this.props.route);
       
@@ -135,12 +142,11 @@ class DisplayImage extends React.Component {
       }
 
 
-      let url = "./assets/adaptive-icon.png";
-      url = "https://firebasestorage.googleapis.com/v0/b/quick-croquis.appspot.com/o/cd796a8b-8ec4-4533-9cb8-74e037a1b5e4?alt=media&token=93a56d45-1b5f-4524-b2fb-87c9e8e0683c"
+      let url = "";
       if(this.state.imageArr.length > 0){
-        console.log("render: ", this.state.imageArr);
+        //console.log("render imgArr: ", this.state.imageArr);
         url = this.state.imageArr[this.state.rand].url;
-        console.log("render: ", url);
+        //console.log("render: ", url);
       }
 
       return (
@@ -166,11 +172,17 @@ class DisplayImage extends React.Component {
             </Pressable>
           </View>
           <View style={styles.controlBar}>
-            <Pressable style={styles.play} onPress={() => this.restartTimer()}>
+            <Pressable style={styles.play} onPress={() => {
+              this.restartTimer();
+              this.newRand();
+            }}>
             <Ionicons name="play-skip-back-sharp" size={ play_button_size} color="black" />
             </Pressable>
             {pausePlay}
-            <Pressable style={styles.play} onPress={() => this.restartTimer()}>
+            <Pressable style={styles.play} onPress={() => {
+              this.restartTimer();
+              this.newRand();
+            }}>
               <Ionicons name="play-skip-forward-sharp" size={play_button_size} color="black" />
             </Pressable>
           </View>

@@ -18,6 +18,8 @@ import uuid from "uuid";
 import { collection, addDoc } from "firebase/firestore"; 
 import {db} from "../firebase";
 
+//ImagePicker to firebase storage code comes from here : https://github.com/expo/examples/tree/master/with-firebase-storage-upload
+
 // Firebase sets some timeers for a long period, which will trigger some warnings. Let's turn that off for this example
 LogBox.ignoreLogs([`Setting a timer for a long period`]);
 
@@ -143,12 +145,20 @@ export default class PickImage extends React.Component {
   };
 
   _takePhoto = async () => {
-    let pickerResult = await ImagePicker.launchCameraAsync({
-      allowsEditing: true,
-      aspect: [4, 3],
-    });
-
-    this._handleImagePicked(pickerResult);
+    if (Platform.OS !== "web") {
+      const {
+        status,
+      } = await ImagePicker.requestCameraPermissionsAsync();
+      if (status !== "granted") {
+        alert("Sorry, we need camera permissions to make this work!");
+      }else{
+        let pickerResult = await ImagePicker.launchCameraAsync({
+          allowsEditing: true,
+          aspect: [4, 3],
+        });
+        this._handleImagePicked(pickerResult);
+      }
+    }
   };
 
   _pickImage = async () => {
